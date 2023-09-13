@@ -28,5 +28,23 @@ public class IType extends Instruction {
     public int[] getImm() {
         return imm;
     }
+
+    @Override
+    public String toString() {
+        StringBuilder iType = new StringBuilder();
+        for(int i = 0 ; i < 6 ; i++){
+            iType.append(op[i]);
+        }
+        for(int i = 0 ; i < 5 ; i++){
+            iType.append(rs[i]);
+        }
+        for(int i = 0 ; i < 5 ; i++){
+            iType.append(rt[i]);
+        }
+        for(int i = 0 ; i < 16 ; i++){
+            iType.append(imm[i]);
+        }
+        return iType.toString();
+    }
 }
 

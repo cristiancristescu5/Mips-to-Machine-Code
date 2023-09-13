@@ -7,6 +7,7 @@ import java.util.*;
 public class Interpreter {
     private Map<InstructionString, Instruction> instructionsToCode = new HashMap<>();
     List<InstructionString> instructionList = new ArrayList<>();
+    int count = 0;
     public Interpreter(String filePath) {
         try{
             File file = new File(filePath);
@@ -52,7 +53,6 @@ public class Interpreter {
         return bits;
     }
     public int[] getFunc(String func){
-        int[] function;
         switch (func) {
             case "add" -> {
                 return new int[]{1, 0, 0, 0, 0, 0};
@@ -77,6 +77,44 @@ public class Interpreter {
             }
         }
     }
+    public int[] getOp(String op){
+        switch(op){
+            case "add", "sub", "or", "xor", "nor", "and"->{
+                return new int[]{0,0,0,0,0,0};
+            }
+            case "addi" -> {
+                return new int[]{0,0,1,0,0,0};
+            }
+            case "andi" ->{
+                return new int[]{0,0,1,1,0,0};
+            }
+            case "ori" ->{
+                return new int[]{0,0,1,1,0,1};
+            }
+            case "beq" ->{
+                return new int[]{0,0,0,1,0,0};
+            }
+            case "j" -> {
+                return new int[]{0,0,0,0,1,0};
+            }
+            case "lw" -> {
+                return new int[]{1,0,0,0,1,1};
+            }
+            case "sw" -> {
+                return new int[]{1, 0, 1, 0, 1, 1};
+            }
+            default -> {
+                return new int[]{};
+            }
+        }
+    }
+    public int[] getJumpAddress(){
+        int[] addr = new int[26];
+
+
+
+        return addr;
+    }
     public void interpret(){
         for(InstructionString i : instructionList) {
             String[] parts = i.getInstruction().split("[ ,]+");
@@ -84,10 +122,7 @@ public class Interpreter {
             switch (partsLength){
                 case 6:{
                     //op = 000000
-                    int[] op = new int[6];
-                    for(int j = 0 ; j <= 5 ; j ++){
-                        op[j] = 0;
-                    }
+                    int[] op = getOp(parts[0]);
                     int rs = Integer.parseInt(parts[1].substring(1));
                     int rt = Integer.parseInt(parts[2].substring(1));
                     int rd = Integer.parseInt(parts[3].substring(1));
@@ -103,12 +138,17 @@ public class Interpreter {
                     instructionsToCode.put(i, new RType(op,regs,regt, regd, shamt, func));
                 }
                 case 2:{
+//                    int op
 
                 }
                 case 4:{
+                    int[] op = getOp(parts[0]);
+//                    int[] rs = getReg(Integer.parseInt(parts[1].substring(1)), 5);
+//                    int[] rt = getReg(Integer.parseInt(parts[2].substring(1)),5);
 
                 }
             }
+            count++;
         }
     }
 

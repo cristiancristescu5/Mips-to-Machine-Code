@@ -19,14 +19,23 @@ public class Interpreter {
             System.err.println(e.getMessage());
         }
     }
-    public int[] getReg(int n){
-        int[] bits = new int[5];
+    public int[] getReg(int n, int size){
+        int[] bits = new int[size];
         int y = n;
         boolean found = false;
-        if(n == 1){
+        if(n == 1 && size == 5){
             return new int[]{0,0,0,0,1};
         }
-        for(int i = 4 ; i >= 0 ; i--){
+        if(n == 0 && size == 16){
+            return new int[]{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+        }
+        if(n == 1 && size == 16){
+            return new int[]{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1};
+        }
+        if(n==0 && size == 5){
+            return new int[]{0,0,0,0,0};
+        }
+        for(int i = size-1 ; i >= 0 ; i--){
             if(!found && y == 1){
                 bits[i] = 1;
                 found = true;
@@ -41,10 +50,6 @@ public class Interpreter {
             }
         }
         return bits;
-    }
-    public int[] getImm(int n){
-        int[]bits = new int[16];
-
     }
     public int[] getFunc(String func){
         int[] function;
@@ -91,9 +96,9 @@ public class Interpreter {
                         shamt[j]=0;
                     }
                     int[] regs, regt, regd = new int[5];
-                    regs = getReg(rs);
-                    regt = getReg(rt);
-                    regd = getReg(rd);
+                    regs = getReg(rs, 5);
+                    regt = getReg(rt, 5);
+                    regd = getReg(rd, 5);
                     int[] func = getFunc(parts[5]);
                     instructionsToCode.put(i, new RType(op,regs,regt, regd, shamt, func));
                 }

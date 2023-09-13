@@ -1,5 +1,7 @@
 package org.example;
 
+import java.util.Arrays;
+
 public class RType extends Instruction {
     private int[] op = new int[6];
     private int[] rs = new int[5];
@@ -39,5 +41,29 @@ public class RType extends Instruction {
 
     public int[] getFunc() {
         return func;
+    }
+
+    @Override
+    public String toString() {
+       StringBuilder rInstruction = new StringBuilder();
+       for(int i = 0 ; i < 6 ; i++){
+           rInstruction.append(op[i]);
+       }
+       for(int i = 0 ; i < 5 ; i++){
+           rInstruction.append(rs[i]);
+       }
+        for(int i = 0 ; i < 5 ; i++){
+            rInstruction.append(rt[i]);
+        }
+        for(int i = 0 ; i < 5 ; i++){
+            rInstruction.append(rd[i]);
+        }
+        for(int i = 0 ; i < 5 ; i++){
+            rInstruction.append(shamt[i]);
+        }
+        for(int i = 0 ; i < 6 ; i++){
+            rInstruction.append(func[i]);
+        }
+        return rInstruction.toString();
     }
 }

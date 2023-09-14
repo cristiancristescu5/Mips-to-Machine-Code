@@ -19,7 +19,6 @@ public class Interpreter {
             while (scanner.hasNextLine() && numInstr != SIZE) {
                 String s = scanner.nextLine();
                 instructions[i] = new InstructionString(s);
-//                System.out.println(s);
                 i++;
                 numInstr++;
             }
@@ -27,7 +26,6 @@ public class Interpreter {
             System.err.println(e.getMessage());
         }
         this.destinationPath = destinationPath;
-        System.out.println("numInstr: " + numInstr);
     }
 
     public int[] getReg(int n, int size) {
@@ -49,7 +47,6 @@ public class Interpreter {
                 }
             }
         }
-//        System.out.println(n + "---" + Arrays.toString(bits));
         return bits;
     }
 
@@ -118,7 +115,6 @@ public class Interpreter {
         int[] addr;
         int counter = 0;
         for (int i = 0; i < numInstr; i++) {
-//            System.out.println(instructions[i].getInstruction());
             if (address.equals(instructions[i].getInstruction())) {
                 break;
             } else {
@@ -129,8 +125,6 @@ public class Interpreter {
         }
         int jumpAddr = (counter) *4;
         addr = getReg(jumpAddr, 26);
-        System.out.println(Arrays.toString(addr));
-        System.out.println(counter);
         count = 0;
         for (int i = 0; i < 2; i++) {
             for (int j = 25; j >= 1; j--) {
@@ -158,14 +152,10 @@ public class Interpreter {
     public void interpret() {
         for (int i = 0; i < numInstr; i++) {
             String[] parts = instructions[i].getInstruction().split("[ ,$()]+");
-//            System.out.println(Arrays.toString(parts));
             int partsLength = parts.length;
             boolean parsed = false;
             count++;
-//            System.out.println(parts.length);
             if (partsLength == 4) {//or, and, nor, add,// sub, xor
-                //op = 000000
-//                System.out.println("sunt aici");
                 int[] op = getOp(parts[0]);
                 if (Arrays.equals(op, new int[]{0, 0, 0, 0, 0, 0})) {
                     int rs = Integer.parseInt(parts[2]);
@@ -211,16 +201,6 @@ public class Interpreter {
                 count++;
                 parsed = true;
             }
-//            if (partsLength == 3) {//lw, sw
-//                int[] op = getOp(parts[0]);
-//                int[] rs = getReg(Integer.parseInt(parts[1].substring(1)), 5);
-//                String[] regImm = parts[2].split("[$)(]+");
-//                int[] rt = getReg(Integer.parseInt(regImm[1]), 5);
-//                int[] imm = getReg(Integer.parseInt(regImm[0]), 16);
-//                instructionsToCode.put(instructions[i], new IType(op, rs, rt, imm));
-//                count++;
-//                parsed = true;
-//            }
             if (partsLength == 1) {
                 parsed = true;
             }

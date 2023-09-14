@@ -9,6 +9,5 @@ public class Main {
         interpreter.interpret();
         System.out.println(interpreter.toString());
         interpreter.writeFile();
-//        System.out.println("$223e4567".substring(1));
     }
 }

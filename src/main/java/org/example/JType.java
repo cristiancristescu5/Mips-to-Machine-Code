@@ -29,7 +29,6 @@ public class JType extends Instruction {
             j.append(add[i]);
         }
         BigInteger intVal =  new BigInteger(j.toString(), 2);
-//        System.out.println(intVal);
         return intVal.toString(16);
     }
 

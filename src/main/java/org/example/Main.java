@@ -3,12 +3,12 @@ package org.example;
 import java.util.Arrays;
 
 public class Main {
-    public final static Interpreter interpreter = new Interpreter("C:\\Users\\crist\\OneDrive\\Desktop\\mipsToMachineCode\\src\\main\\resources\\instructions.txt");
+    public final static Interpreter interpreter = new Interpreter("C:\\Users\\crist\\OneDrive\\Desktop\\mipsToMachineCode\\src\\main\\resources\\instructions.txt",
+                                                                "C:\\Users\\crist\\OneDrive\\Desktop\\mipsToMachineCode\\src\\main\\resources\\machineCodeInstructions.txt");
     public static void main(String[] args) {
-//        interpreter.interpret();
-//        System.out.println(interpreter.toString());
-        String s = new String("80($90)");
-        String[]s1 = s.split("[()$]+");
-        System.out.println(Arrays.toString(s1));
+        interpreter.interpret();
+        System.out.println(interpreter.toString());
+        interpreter.writeFile();
+        System.out.println("$223e4567".substring(1));
     }
 }

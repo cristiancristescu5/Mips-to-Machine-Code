@@ -1,17 +1,17 @@
 package org.example;
 
-import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.*;
 import java.util.*;
 
 public class Interpreter {
     private static final int SIZE = 128;
     private final Map<InstructionString, Instruction> instructionsToCode = new HashMap<>();
     InstructionString[] instructions = new InstructionString[128];
-    int count = 0;
-    int numInstr = 0;
+    private int count = 0;
+    private int numInstr = 0;
+    private String destinationPath;
 
-    public Interpreter(String filePath) {
+    public Interpreter(String filePath, String destinationPath) {
         int i = 0;
         try {
             File file = new File(filePath);
@@ -24,6 +24,7 @@ public class Interpreter {
         } catch (FileNotFoundException e) {
             System.err.println(e.getMessage());
         }
+        this.destinationPath = destinationPath;
     }
 
     public int[] getReg(int n, int size) {
@@ -208,8 +209,21 @@ public class Interpreter {
             }
         }
     }
-    public void writeFile(String filePath){
-
+    public void writeFile(){//deschid destination path
+        FileWriter fileWriter;
+        try{
+            fileWriter = new FileWriter(destinationPath);
+            BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
+            for(InstructionString s : instructionsToCode.keySet()){
+                bufferedWriter.write(instructionsToCode.get(s).toString());
+                System.out.println(s.toString() + "----------" + instructionsToCode.get(s).toString());
+            }
+            bufferedWriter.close();
+            fileWriter.close();
+            System.out.println("Am scris cu succes");
+        }catch (IOException e){
+            System.err.println(e.getMessage());
+        }
     }
     @Override
     public String toString() {

@@ -5,54 +5,72 @@ import java.io.FileNotFoundException;
 import java.util.*;
 
 public class Interpreter {
-    private Map<InstructionString, Instruction> instructionsToCode = new HashMap<>();
+    private static final int SIZE = 128;
+    private final Map<InstructionString, Instruction> instructionsToCode = new HashMap<>();
     List<InstructionString> instructionList = new ArrayList<>();
+    String[] instructions = new String[128];
     int count = 0;
+    int numInstr = 0;
+
     public Interpreter(String filePath) {
-        try{
+//        try {
+//            File file = new File(filePath);
+//            Scanner scanner = new Scanner(file);
+//            while (scanner.hasNextLine()) {
+//                instructionList.add(new InstructionString(scanner.nextLine()));
+//            }
+//            scanner.close();
+//        } catch (FileNotFoundException e) {
+//            System.err.println(e.getMessage());
+//        }
+        int i = 0;
+        try {
             File file = new File(filePath);
             Scanner scanner = new Scanner(file);
-            while(scanner.hasNextLine()){
-                instructionList.add(new InstructionString(scanner.nextLine()));
+            while (scanner.hasNextLine() && numInstr != SIZE) {
+                instructions[i] = scanner.nextLine();
+                i++;
+                numInstr++;
             }
-            scanner.close();
-        }catch (FileNotFoundException e){
+        } catch (FileNotFoundException e) {
             System.err.println(e.getMessage());
         }
     }
-    public int[] getReg(int n, int size){
+
+    public int[] getReg(int n, int size) {
         int[] bits = new int[size];
         int y = n;
         boolean found = false;
-        if(n == 1 && size == 5){
-            return new int[]{0,0,0,0,1};
+        if (n == 1 && size == 5) {
+            return new int[]{0, 0, 0, 0, 1};
         }
-        if(n == 0 && size == 16){
-            return new int[]{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+        if (n == 0 && size == 16) {
+            return new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
         }
-        if(n == 1 && size == 16){
-            return new int[]{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1};
+        if (n == 1 && size == 16) {
+            return new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1};
         }
-        if(n==0 && size == 5){
-            return new int[]{0,0,0,0,0};
+        if (n == 0 && size == 5) {
+            return new int[]{0, 0, 0, 0, 0};
         }
-        for(int i = size-1 ; i >= 0 ; i--){
-            if(!found && y == 1){
+        for (int i = size - 1; i >= 0; i--) {
+            if (!found && y == 1) {
                 bits[i] = 1;
                 found = true;
             }
-            if(y!=1 && !found){
-                bits[i]=y%2;
-                y = y/2;
-            }else {
-                if(y==1 && found) {
+            if (y != 1 && !found) {
+                bits[i] = y % 2;
+                y = y / 2;
+            } else {
+                if (y == 1 && found) {
                     bits[i] = 0;
                 }
             }
         }
         return bits;
     }
-    public int[] getFunc(String func){
+
+    public int[] getFunc(String func) {
         switch (func) {
             case "add" -> {
                 return new int[]{1, 0, 0, 0, 0, 0};
@@ -77,28 +95,29 @@ public class Interpreter {
             }
         }
     }
-    public int[] getOp(String op){
-        switch(op){
-            case "add", "sub", "or", "xor", "nor", "and"->{
-                return new int[]{0,0,0,0,0,0};
+
+    public int[] getOp(String op) {
+        switch (op) {
+            case "add", "sub", "or", "xor", "nor", "and" -> {
+                return new int[]{0, 0, 0, 0, 0, 0};
             }
             case "addi" -> {
-                return new int[]{0,0,1,0,0,0};
+                return new int[]{0, 0, 1, 0, 0, 0};
             }
-            case "andi" ->{
-                return new int[]{0,0,1,1,0,0};
+            case "andi" -> {
+                return new int[]{0, 0, 1, 1, 0, 0};
             }
-            case "ori" ->{
-                return new int[]{0,0,1,1,0,1};
+            case "ori" -> {
+                return new int[]{0, 0, 1, 1, 0, 1};
             }
-            case "beq" ->{
-                return new int[]{0,0,0,1,0,0};
+            case "beq" -> {
+                return new int[]{0, 0, 0, 1, 0, 0};
             }
             case "j" -> {
-                return new int[]{0,0,0,0,1,0};
+                return new int[]{0, 0, 0, 0, 1, 0};
             }
             case "lw" -> {
-                return new int[]{1,0,0,0,1,1};
+                return new int[]{1, 0, 0, 0, 1, 1};
             }
             case "sw" -> {
                 return new int[]{1, 0, 1, 0, 1, 1};
@@ -108,43 +127,74 @@ public class Interpreter {
             }
         }
     }
-    public int[] getJumpAddress(){
+
+    public int[] getJumpAddress(String address) {
         int[] addr = new int[26];
-
-
-
+        boolean found = false;
+        for (int i = 0; i <= numInstr; i++) {
+            if (address.equals(instructions[i])) {
+                found = true;
+                count = 0;
+            } else {
+                count++;
+            }
+        }
+        int jumpAddr = count * 4;
+        addr = getReg(jumpAddr, 26);
+        for(int i = 0 ; i< 2 ; i++){
+            for(int j = 25; j >=1 ; j --){
+                addr[j] = addr[j-1];
+            }
+            addr[i] = 0;
+        }
         return addr;
     }
-    public void interpret(){
-        for(InstructionString i : instructionList) {
+
+    public void interpret() {
+        for (InstructionString i : instructionList) {
             String[] parts = i.getInstruction().split("[ ,]+");
             int partsLength = parts.length;
-            switch (partsLength){
-                case 6:{
+            switch (partsLength) {
+                case 4: {//or, and, nor, add, sub, xor
                     //op = 000000
                     int[] op = getOp(parts[0]);
-                    int rs = Integer.parseInt(parts[1].substring(1));
-                    int rt = Integer.parseInt(parts[2].substring(1));
-                    int rd = Integer.parseInt(parts[3].substring(1));
-                    int[] shamt = new int[5];
-                    for(int j = 0 ; j <= 4 ; j++){
-                        shamt[j]=0;
+                    if (Arrays.equals(op, new int[]{0, 0, 0, 0, 0, 0})) {
+                        int rs = Integer.parseInt(parts[1].substring(1));
+                        int rt = Integer.parseInt(parts[2].substring(1));
+                        int rd = Integer.parseInt(parts[3].substring(1));
+                        int[] shamt = new int[5];
+                        for (int j = 0; j <= 4; j++) {
+                            shamt[j] = 0;
+                        }
+                        int[] regs, regt, regd;
+                        regs = getReg(rs, 5);
+                        regt = getReg(rt, 5);
+                        regd = getReg(rd, 5);
+                        int[] func = getFunc(parts[3]);
+                        instructionsToCode.put(i, new RType(op, regs, regt, regd, shamt, func));
+                    } else {//addi, ori, andi
+                        //op != 000100
+                        if (!Arrays.equals(op, new int[]{0, 0, 0, 1, 0, 0})) {
+                            int[] rs = getReg(Integer.parseInt(parts[1].substring(1)), 5);
+                            int[] rt = getReg(Integer.parseInt(parts[2].substring(1)), 5);
+                            int[] imm = getReg(Integer.parseInt(parts[3]), 16);
+                            instructionsToCode.put(i, new IType(op, rs, rt, imm));
+                        } else {//beq calculez nr de adrese
+                            //op == 000100
+                        }
                     }
-                    int[] regs, regt, regd = new int[5];
-                    regs = getReg(rs, 5);
-                    regt = getReg(rt, 5);
-                    regd = getReg(rd, 5);
-                    int[] func = getFunc(parts[5]);
-                    instructionsToCode.put(i, new RType(op,regs,regt, regd, shamt, func));
                 }
-                case 2:{
-//                    int op
+                case 2: {//jump
+                    int[] op = getOp(parts[0]);
+                    int[] addr = getJumpAddress(parts[1]);
+                    instructionsToCode.put(i, new JType(op, addr));
+                }
+                case 3: {//lw, sw
+                    int[] op = getOp(parts[0]);
 
                 }
-                case 4:{
-                    int[] op = getOp(parts[0]);
-//                    int[] rs = getReg(Integer.parseInt(parts[1].substring(1)), 5);
-//                    int[] rt = getReg(Integer.parseInt(parts[2].substring(1)),5);
+
+                default: {
 
                 }
             }
@@ -155,7 +205,7 @@ public class Interpreter {
     @Override
     public String toString() {
         StringBuilder instr = new StringBuilder();
-        for(InstructionString i : instructionsToCode.keySet()){
+        for (InstructionString i : instructionsToCode.keySet()) {
             instr.append(i.toString()).append("------").append(instructionsToCode.get(i).toString());
         }
         return instr.toString();

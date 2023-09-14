@@ -1,10 +1,8 @@
 package org.example;
 public class Main {
+    public final static Interpreter interpreter = new Interpreter("C:\\Users\\crist\\OneDrive\\Desktop\\mipsToMachineCode\\src\\main\\resources\\instructions.txt");
     public static void main(String[] args) {
-        String s = new String("Azi e bine, fac bine");
-        String[] s1 = s.split("[ ,]+");
-        for(String s2 : s1){
-            System.out.println(s2);
-        }
+        interpreter.interpret();
+        System.out.println(interpreter.toString());
     }
 }

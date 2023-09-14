@@ -1,6 +1,5 @@
 package org.example;
 
-import java.util.Arrays;
 
 public class RType extends Instruction {
     private int[] op = new int[6];
@@ -64,6 +63,6 @@ public class RType extends Instruction {
         for(int i = 0 ; i < 6 ; i++){
             rInstruction.append(func[i]);
         }
-        return rInstruction.toString();
+        return Integer.toHexString(Integer.parseInt(rInstruction.toString(),2));
     }
 }

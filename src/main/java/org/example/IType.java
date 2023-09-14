@@ -1,5 +1,7 @@
 package org.example;
 
+import java.math.BigInteger;
+
 public class IType extends Instruction {
     private int[] op = new int[6];
     private int[] rs = new int[5];
@@ -44,7 +46,8 @@ public class IType extends Instruction {
         for(int i = 0 ; i < 16 ; i++){
             iType.append(imm[i]);
         }
-        return iType.toString();
+        BigInteger intVal = new BigInteger(iType.toString(), 2);
+        return intVal.toString(16);
     }
 }
 

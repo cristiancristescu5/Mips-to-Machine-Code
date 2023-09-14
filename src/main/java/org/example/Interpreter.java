@@ -7,28 +7,17 @@ import java.util.*;
 public class Interpreter {
     private static final int SIZE = 128;
     private final Map<InstructionString, Instruction> instructionsToCode = new HashMap<>();
-    List<InstructionString> instructionList = new ArrayList<>();
-    String[] instructions = new String[128];
+    InstructionString[] instructions = new InstructionString[128];
     int count = 0;
     int numInstr = 0;
 
     public Interpreter(String filePath) {
-//        try {
-//            File file = new File(filePath);
-//            Scanner scanner = new Scanner(file);
-//            while (scanner.hasNextLine()) {
-//                instructionList.add(new InstructionString(scanner.nextLine()));
-//            }
-//            scanner.close();
-//        } catch (FileNotFoundException e) {
-//            System.err.println(e.getMessage());
-//        }
         int i = 0;
         try {
             File file = new File(filePath);
             Scanner scanner = new Scanner(file);
             while (scanner.hasNextLine() && numInstr != SIZE) {
-                instructions[i] = scanner.nextLine();
+                instructions[i] = new InstructionString(scanner.nextLine());
                 i++;
                 numInstr++;
             }
@@ -132,7 +121,7 @@ public class Interpreter {
         int[] addr = new int[26];
         boolean found = false;
         for (int i = 0; i <= numInstr; i++) {
-            if (address.equals(instructions[i])) {
+            if (address.equals(instructions[i].getInstruction())) {
                 found = true;
                 count = 0;
             } else {
@@ -141,18 +130,28 @@ public class Interpreter {
         }
         int jumpAddr = count * 4;
         addr = getReg(jumpAddr, 26);
-        for(int i = 0 ; i< 2 ; i++){
-            for(int j = 25; j >=1 ; j --){
-                addr[j] = addr[j-1];
+        for (int i = 0; i < 2; i++) {
+            for (int j = 25; j >= 1; j--) {
+                addr[j] = addr[j - 1];
             }
             addr[i] = 0;
         }
         return addr;
     }
-
+    public int[] getBranchAdd(String s){
+        int counter = 0;
+        for(int i = count ; i <numInstr ; i++){
+            if(instructions[i].getInstruction().equals(s)){
+                break;
+            }else {
+                counter++;
+            }
+        }
+        return getReg(counter-1, 16);
+    }
     public void interpret() {
-        for (InstructionString i : instructionList) {
-            String[] parts = i.getInstruction().split("[ ,]+");
+        for (int i = 0 ; i < numInstr ; i++) {
+            String[] parts = instructions[i].getInstruction().split("[ ,]+");
             int partsLength = parts.length;
             switch (partsLength) {
                 case 4: {//or, and, nor, add, sub, xor
@@ -171,37 +170,47 @@ public class Interpreter {
                         regt = getReg(rt, 5);
                         regd = getReg(rd, 5);
                         int[] func = getFunc(parts[3]);
-                        instructionsToCode.put(i, new RType(op, regs, regt, regd, shamt, func));
+                        instructionsToCode.put(instructions[i], new RType(op, regs, regt, regd, shamt, func));
                     } else {//addi, ori, andi
                         //op != 000100
                         if (!Arrays.equals(op, new int[]{0, 0, 0, 1, 0, 0})) {
                             int[] rs = getReg(Integer.parseInt(parts[1].substring(1)), 5);
                             int[] rt = getReg(Integer.parseInt(parts[2].substring(1)), 5);
                             int[] imm = getReg(Integer.parseInt(parts[3]), 16);
-                            instructionsToCode.put(i, new IType(op, rs, rt, imm));
+                            instructionsToCode.put(instructions[i], new IType(op, rs, rt, imm));
                         } else {//beq calculez nr de adrese
-                            //op == 000100
+                            int[] rs = getReg(Integer.parseInt(parts[1].substring(1)),5);
+                            int[] rt = getReg(Integer.parseInt(parts[2].substring(1)),5);
+                            int[] add = getBranchAdd(parts[3]);
+                            instructionsToCode.put(instructions[i], new IType(op, rs, rt, add));
                         }
                     }
+                    count++;
                 }
                 case 2: {//jump
                     int[] op = getOp(parts[0]);
                     int[] addr = getJumpAddress(parts[1]);
-                    instructionsToCode.put(i, new JType(op, addr));
+                    instructionsToCode.put(instructions[i], new JType(op, addr));
+                    count++;
                 }
                 case 3: {//lw, sw
                     int[] op = getOp(parts[0]);
-
+                    int[] rs = getReg(Integer.parseInt(parts[1].substring(1)), 5);
+                    String[] regImmm = parts[2].split("[$)(]+");
+                    int[] rt = getReg(Integer.parseInt(regImmm[1]), 5);
+                    int[] imm = getReg(Integer.parseInt(regImmm[0]), 16);
+                    instructionsToCode.put(instructions[i], new IType(op, rs, rt, imm));
+                    count++;
                 }
-
-                default: {
-
+                default:{
+                    throw new IllegalArgumentException("Invalid Instruction: " + instructions[i].getInstruction());
                 }
             }
-            count++;
         }
     }
+    public void writeFile(String filePath){
 
+    }
     @Override
     public String toString() {
         StringBuilder instr = new StringBuilder();

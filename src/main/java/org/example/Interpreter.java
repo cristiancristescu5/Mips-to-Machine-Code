@@ -217,7 +217,7 @@ public class Interpreter {
             BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
             for (int i = 0; i < numInstr; i++) {
                 if (instructions[i].getInstruction().split(" ").length != 1) {
-                    System.out.println(instructions[i]);
+                    System.out.println(instructions[i].getInstruction());
                     bufferedWriter.write(instructionsToCode.get(instructions[i]).toString());
                     if (i != numInstr - 1) {
                         bufferedWriter.write("\n");
@@ -237,7 +237,7 @@ public class Interpreter {
         StringBuilder instr = new StringBuilder();
         for (int i = 0; i < numInstr; i++) {
             if (instructions[i].getInstruction().split(" ").length != 1) {
-                instr.append(instructions[i].toString()).append("------").append(instructionsToCode.get(instructions[i]).toString()).append("\n");
+                instr.append(instructions[i].getInstruction()).append("------").append(instructionsToCode.get(instructions[i]).toString()).append("\n");
             }
         }
         return instr.toString();

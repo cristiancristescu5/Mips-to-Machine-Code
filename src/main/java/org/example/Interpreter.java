@@ -6,7 +6,7 @@ import java.util.*;
 public class Interpreter {
     private static final int SIZE = 128;
     private final Map<InstructionString, Instruction> instructionsToCode = new HashMap<>();
-    InstructionString[] instructions = new InstructionString[128];
+    private final InstructionString[] instructions = new InstructionString[128];
     private int count = 0;
     private int numInstr = 0;
     private final String destinationPath;

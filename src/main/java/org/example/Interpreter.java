@@ -16,11 +16,14 @@ public class Interpreter {
         try {
             File file = new File(filePath);
             Scanner scanner = new Scanner(file);
-            while (scanner.hasNextLine() && numInstr != SIZE) {
+            while (scanner.hasNextLine()) {
                 String s = scanner.nextLine();
                 instructions[i] = new InstructionString(s);
                 i++;
                 numInstr++;
+                if(numInstr >=SIZE){
+                    throw new IllegalArgumentException("Too Many Instructions");
+                }
             }
         } catch (FileNotFoundException e) {
             System.err.println(e.getMessage());

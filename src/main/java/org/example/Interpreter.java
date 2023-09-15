@@ -161,14 +161,11 @@ public class Interpreter {
             if (partsLength == 4) {//or, and, nor, add,// sub, xor
                 int[] op = getOp(parts[0]);
                 if (Arrays.equals(op, new int[]{0, 0, 0, 0, 0, 0})) {
-                    int rs = Integer.parseInt(parts[2]);
-                    int rt = Integer.parseInt(parts[3]);
-                    int rd = Integer.parseInt(parts[1]);
                     int[] shamt = new int[]{0, 0, 0, 0, 0, 0};
                     int[] regs, regt, regd;
-                    regs = getReg(rs, 5);
-                    regt = getReg(rt, 5);
-                    regd = getReg(rd, 5);
+                    regs = getReg(Integer.parseInt(parts[2]), 5);
+                    regt = getReg(Integer.parseInt(parts[3]), 5);
+                    regd = getReg(Integer.parseInt(parts[1]), 5);
                     int[] func = getFunc(parts[0]);
                     instructionsToCode.put(instructions[i], new RType(op, regs, regt, regd, shamt, func));
                     parsed = true;
@@ -213,7 +210,7 @@ public class Interpreter {
         }
     }
 
-    public void writeFile() {//deschid destination path
+    public void writeFile() {
         FileWriter fileWriter;
         try {
             fileWriter = new FileWriter(destinationPath);

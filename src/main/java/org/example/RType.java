@@ -4,12 +4,12 @@ package org.example;
 import java.util.Arrays;
 
 public class RType extends Instruction {
-    private int[] op = new int[6];
-    private int[] rs = new int[5];
-    private int[] rt = new int[5];
-    private int[] rd = new int[5];
-    private int[] shamt = new int[5];
-    private int[] func = new int[6];
+    private final int[] op;
+    private final int[] rs;
+    private final int[] rt;
+    private final int[] rd;
+    private final int[] shamt;
+    private final int[] func;
 
     public RType(int[] op, int[] rs, int[] rt, int[] rd, int[] shamt, int[] func) {
         this.op = op;
@@ -46,25 +46,25 @@ public class RType extends Instruction {
 
     @Override
     public String toString() {
-       StringBuilder rInstruction = new StringBuilder();
-       for(int i = 0 ; i < 6 ; i++){
-           rInstruction.append(op[i]);
-       }
-       for(int i = 0 ; i < 5 ; i++){
-           rInstruction.append(rs[i]);
-       }
-        for(int i = 0 ; i < 5 ; i++){
+        StringBuilder rInstruction = new StringBuilder();
+        for (int i = 0; i < 6; i++) {
+            rInstruction.append(op[i]);
+        }
+        for (int i = 0; i < 5; i++) {
+            rInstruction.append(rs[i]);
+        }
+        for (int i = 0; i < 5; i++) {
             rInstruction.append(rt[i]);
         }
-        for(int i = 0 ; i < 5 ; i++){
+        for (int i = 0; i < 5; i++) {
             rInstruction.append(rd[i]);
         }
-        for(int i = 0 ; i < 5 ; i++){
+        for (int i = 0; i < 5; i++) {
             rInstruction.append(shamt[i]);
         }
-        for(int i = 0 ; i < 6 ; i++) {
+        for (int i = 0; i < 6; i++) {
             rInstruction.append(func[i]);
         }
-        return Integer.toHexString(Integer.parseInt(rInstruction.toString(),2));
+        return Integer.toHexString(Integer.parseInt(rInstruction.toString(), 2));
     }
 }

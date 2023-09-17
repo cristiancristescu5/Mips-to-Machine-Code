@@ -3,10 +3,10 @@ package org.example;
 import java.math.BigInteger;
 
 public class IType extends Instruction {
-    private int[] op = new int[6];
-    private int[] rs = new int[5];
-    private int[] rt = new int[5];
-    private int[] imm = new int[16];
+    private final int[] op;
+    private final int[] rs;
+    private final int[] rt;
+    private final int[] imm;
 
     public IType(int[] op, int[] rs, int[] rt, int[] imm) {
         this.op = op;

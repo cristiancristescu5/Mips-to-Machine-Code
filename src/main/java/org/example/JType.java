@@ -3,8 +3,8 @@ package org.example;
 import java.math.BigInteger;
 
 public class JType extends Instruction {
-    private int[] op = new int[6];
-    private int[] add = new int[26];
+    private final int[] op;
+    private final int[] add;
 
     public JType(int[] op, int[] add) {
         this.op = op;
